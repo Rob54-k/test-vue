@@ -2,6 +2,9 @@
   <div>
     <div class="contact">
       <div class="header">
+        <div class="back-to-contact-list">
+          <img src="../assets/back.png" alt="" @click="backToContactList()">
+        </div>
         About {{ contact.name }}
       </div>
       <div class="added-info">
@@ -149,6 +152,9 @@
                 this.oldDataInfoElement = Object.assign({}, info);
                 this.editedItem = Object.assign({}, info);
                 this.editedIndex = this.contact.aboutContact.indexOf(info);
+            },
+            backToContactList() {
+                this.$router.push('/');
             }
         },
         data() {
@@ -202,9 +208,22 @@ input:focus {
 }
 .contact {
   .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #42b983;
     font-weight: bold;
     font-size: 2rem;
+    .back-to-contact-list {
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      img {
+        cursor: pointer;
+        height: 35px;
+        width: 35px;
+      }
+    }
   }
   .added-info {
     display: flex;
