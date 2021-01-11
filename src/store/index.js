@@ -15,6 +15,9 @@ export default new Vuex.Store({
     },
     SET_LAST_ACTIVE (state, lastAction) {
       state.lastAction = lastAction;
+    },
+    APPEND_CONTACT (state, name) {
+      state.contacts.push({id: state.contacts.length + 1, name: name, aboutContact: []});
     }
   },
   actions: {

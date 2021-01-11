@@ -10,15 +10,15 @@
       <div class="added-info">
         <form @submit.prevent="addedField">
           <div class="input-block">
-            <input type="text" placeholder="Name field" v-model="newField.name">
-            <input type="text" placeholder="Value" v-model="newField.value">
+            <input type="text" placeholder="Name field" v-model.trim="newField.name">
+            <input type="text" placeholder="Value" v-model.trim="newField.value">
           </div>
           <div class="btn-submit">
             <button>Added</button>
           </div>
         </form>
       </div>
-      <div class="about-contact-field" v-for="info in contact.aboutContact">
+      <div class="about-contact-field" v-for="(info,i) in contact.aboutContact" :key="i">
         <div class="about-info-block" v-if="info.id !== editedItem.id">
           <div class="field-name">{{ info.name }}</div>
           <div class="field-value">{{ info.value }}</div>
@@ -27,9 +27,9 @@
             <img @click="showEditBlock(info)" src="../assets/edit.png" alt="">
           </div>
         </div>
-        <div class="correct-block-field" v-if="info.id === editedItem.id">
-          <input type="text" placeholder="New field name" v-model="editedItem.name">
-          <input type="text" placeholder="New value" v-model="editedItem.value">
+        <div class="edit-block-field" v-if="info.id === editedItem.id">
+          <input type="text" placeholder="New field name" v-model.trim="editedItem.name">
+          <input type="text" placeholder="New value" v-model.trim="editedItem.value">
           <div class="btn-group">
             <button @click="correctInfo()">Save</button>
             <button @click="showCancelPopup = true">Cancel</button>
@@ -46,7 +46,7 @@
       :contact="contact"
       v-on:hidePopup="hidePopup($event)"
     />
-    <edit-about-element-cancel-popup
+    <edit-info-cancel-popup
       v-if="showCancelPopup"
       v-on:hideCancelPopup="hidePopup($event)"
     />
@@ -56,18 +56,15 @@
 <script>
     import {mapActions} from "vuex";
     import DeleteAboutElementPopup from '../components/delete-about-element-popup';
-    import EditAboutElementCancelPopup from '../components/edit-about-element-cancel-popup';
+    import EditInfoCancelPopup from '../components/edit-info-cancel-popup';
 
     export default {
         name: "contact",
-        components: {DeleteAboutElementPopup, EditAboutElementCancelPopup},
+        components: {DeleteAboutElementPopup, EditInfoCancelPopup},
         methods: {
             ...mapActions(['getContacts', 'addContactToDb']),
             async addedField() {
                 if (!this.newField.name || !this.newField.value) {
-                    return;
-                }
-                if (!this.newField.name.trim() || !this.newField.value.trim()) {
                     return;
                 }
                 this.newField.id = Date.now();
@@ -76,8 +73,7 @@
 
                 this.contact.aboutContact.push(newField);
 
-                let contacts = this.contacts;
-                this.$store.commit('SET_CONTACTS', contacts);
+                this.$store.commit('SET_CONTACTS', this.contacts);
                 await this.addContactToDb({ contact: this.contact });
                 this.newField = {};
             },
@@ -135,15 +131,11 @@
                 if (!this.editedItem.name || !this.editedItem.value) {
                     return;
                 }
-                if (!this.editedItem.name.trim() || !this.editedItem.value.trim()) {
-                    return;
-                }
                 if (this.editedIndex !== -1) {
                     await this.$store.commit('SET_LAST_ACTIVE', {infoElement: this.oldDataInfoElement, action: 'edit'});
                     Object.assign(this.contact.aboutContact[this.editedIndex], this.editedItem);
                 }
-                let contacts = this.contacts;
-                this.$store.commit('SET_CONTACTS', contacts);
+                this.$store.commit('SET_CONTACTS', this.contacts);
                 await this.addContactToDb({ contact: this.contact });
                 this.editedIndex = -1;
                 this.editedItem = {};
@@ -271,7 +263,7 @@ input:focus {
         cursor: pointer;
       }
     }
-    .correct-block-field {
+    .edit-block-field {
       display: flex;
       justify-content: center;
       align-items: center;

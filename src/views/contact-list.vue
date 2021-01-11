@@ -10,7 +10,7 @@
     <hr>
     <div class="contacts">
       <ul>
-        <li v-for="contact of contacts" :key="contact.id">
+        <li v-for="(contact, i) of contacts" :key="i">
           <router-link :to="`/contact/${contact.id}`">
             {{ contact.name }}
           </router-link>
@@ -46,11 +46,8 @@
                 if (!name.trim()) {
                     return;
                 }
-                let contacts = this.contacts;
-                let contact = {id: this.contacts.length + 1, name, aboutContact: []};
-                contacts.push(contact);
-                this.$store.commit('SET_CONTACTS', contacts);
-                await this.addContactToDb({ contact });
+                await this.addContactToDb({contact: {id: this.contacts.length + 1, name, aboutContact: []}});
+                this.$store.commit('APPEND_CONTACT', name);
                 this.nameContact = '';
             },
             hidePopup() {

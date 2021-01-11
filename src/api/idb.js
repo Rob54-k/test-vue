@@ -13,7 +13,6 @@ export default {
 
             request.onerror = e => {
                 console.log('Error opening db', e);
-                // eslint-disable-next-line prefer-promise-reject-errors
                 reject('Error');
             };
 
